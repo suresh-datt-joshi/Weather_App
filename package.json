@@ -1,21 +1,18 @@
 {
   "dependencies": {
-    "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",
-    "express": "^5.1.0",
-    "mongoose": "^8.17.0",
-    "node": "^22.18.0"
+    "express": "^5.1.0"
   },
   "name": "weather-app",
-  "version": "1.0.0",
-  "description": "",
-  "main": "script.js",
+  "version": "2.0.0",
+  "description": "Enhanced Weather App with 5-day forecast and modern UI",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
-  "keywords": [],
+  "keywords": ["weather", "forecast", "api"],
   "author": "",
   "license": "ISC",
   "type": "commonjs"
