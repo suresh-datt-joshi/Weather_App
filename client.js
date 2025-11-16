@@ -224,17 +224,21 @@ document.addEventListener('DOMContentLoaded', () => {
         const forecastContainer = document.getElementById('forecast-container');
         forecastContainer.innerHTML = '';
         
-        // Group forecasts by date and get one per day
-        const dailyForecasts = {};
-        data.list.forEach(item => {
-            const date = new Date(item.dt * 1000).toDateString();
-            if (!dailyForecasts[date] || new Date(item.dt * 1000).getHours() === 12) {
-                dailyForecasts[date] = item;
-            }
-        });
-        
-        // Display 5 days
-        const forecastDays = Object.values(dailyForecasts).slice(0, 5);
+        // Use daily field if available (from Open-Meteo), otherwise group from list
+        let forecastDays;
+        if (data.daily && Array.isArray(data.daily)) {
+            forecastDays = data.daily.slice(0, 5);
+        } else {
+            // Group forecasts by date and get one per day
+            const dailyForecasts = {};
+            data.list.forEach(item => {
+                const date = new Date(item.dt * 1000).toDateString();
+                if (!dailyForecasts[date] || new Date(item.dt * 1000).getHours() === 12) {
+                    dailyForecasts[date] = item;
+                }
+            });
+            forecastDays = Object.values(dailyForecasts).slice(0, 5);
+        }
         forecastDays.forEach((day, index) => {
             const date = new Date(day.dt * 1000);
             const dayName = index === 0 ? 'Today' : date.toLocaleDateString('en-US', { weekday: 'short' });
@@ -300,19 +304,43 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const hourlyData = data.list.slice(0, state.hourlyForecastLimit);
         
-        hourlyData.forEach(item => {
-            const date = new Date(item.dt * 1000);
+        hourlyData.forEach((item, index) => {
+            // Use dt_txt if available (includes timezone info), otherwise use dt timestamp
+            let date;
+            if (item.dt_txt) {
+                date = new Date(item.dt_txt);
+            } else {
+                date = new Date(item.dt * 1000);
+            }
+            
             const hour = date.getHours();
-            const timeStr = hour === 0 ? '12 AM' : hour < 12 ? `${hour} AM` : hour === 12 ? '12 PM' : `${hour - 12} PM`;
+            const minutes = date.getMinutes();
+            let timeStr;
+            if (hour === 0) {
+                timeStr = '12 AM';
+            } else if (hour < 12) {
+                timeStr = `${hour} AM`;
+            } else if (hour === 12) {
+                timeStr = '12 PM';
+            } else {
+                timeStr = `${hour - 12} PM`;
+            }
             
             const hourlyCard = document.createElement('div');
             hourlyCard.className = 'flex flex-col items-center bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-700 dark:to-gray-800 p-4 rounded-xl shadow-md min-w-[100px]';
+            
+            // Handle precipitation probability - convert from decimal (0-1) to percentage (0-100)
+            let popValue = 0;
+            if (item.pop !== undefined && item.pop !== null && !isNaN(item.pop)) {
+                popValue = Math.round(item.pop * 100);
+            }
+            
             hourlyCard.innerHTML = `
                 <p class="text-xs font-semibold text-gray-600 dark:text-gray-400 mb-2">${timeStr}</p>
                 <img src="https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png" alt="${item.weather[0].description}" class="w-12 h-12 mb-2">
                 <p class="text-lg font-bold text-gray-800 dark:text-white">${Math.round(item.main.temp)}°</p>
                 <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">${Math.round(item.main.feels_like)}°</p>
-                <p class="text-xs text-blue-600 dark:text-blue-400 mt-1">${Math.round(item.pop * 100)}%</p>
+                <p class="text-xs text-blue-600 dark:text-blue-400 mt-1">${popValue}%</p>
             `;
             hourlyContainer.appendChild(hourlyCard);
         });

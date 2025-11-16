@@ -19,7 +19,18 @@ exports.handler = async (event, context) => {
 
     // Get query parameters
     const { city, lat, lon } = event.queryStringParameters || {};
-    const apiKey = process.env.WEATHER_API_KEY || "e9ee5766a9354a5378740036b37f6a87";
+    const apiKey = process.env.WEATHER_API_KEY;
+    
+    if (!apiKey) {
+        return {
+            statusCode: 500,
+            headers,
+            body: JSON.stringify({ 
+                message: 'API key not configured. Please set WEATHER_API_KEY environment variable. Get your free API key at https://openweathermap.org/api' 
+            })
+        };
+    }
+    
     let apiUrl;
 
     if (city) {
