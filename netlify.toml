@@ -1,0 +1,25 @@
+[build]
+  # No build command needed - static site
+  publish = "."
+
+[functions]
+  # Directory for Netlify Functions
+  directory = "netlify/functions"
+
+# Redirect API routes to Netlify Functions
+[[redirects]]
+  from = "/api/weather"
+  to = "/.netlify/functions/weather"
+  status = 200
+
+[[redirects]]
+  from = "/api/forecast"
+  to = "/.netlify/functions/forecast"
+  status = 200
+
+# Catch-all for SPA routing (must be last)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
