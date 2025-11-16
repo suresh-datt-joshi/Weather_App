@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Global State ---
     const state = {
-        serverUrl: 'http://localhost:3000',
+        serverUrl: '', // Use relative paths for Vercel deployment
         recentSearches: JSON.parse(localStorage.getItem('recentSearches') || '[]'),
         maxRecentSearches: 5,
         favorites: JSON.parse(localStorage.getItem('favorites') || '[]'),
@@ -37,8 +37,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const toggleHourly = document.getElementById('toggle-hourly');
     const weatherMapLink = document.getElementById('weather-map-link');
     
-    const apiKey = "e9ee5766a9354a5378740036b37f6a87";
-    const apiBaseUrl = "https://api.openweathermap.org/data/2.5";
+    // API endpoints - use relative paths for Vercel deployment
+    const apiBaseUrl = state.serverUrl || '';
 
     // --- Theme Toggle ---
     const applyTheme = (isDark) => {
@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.addEventListener('click', () => {
                 const city = btn.getAttribute('data-city');
                 locationInput.value = city;
-                fetchWeatherData(`${apiBaseUrl}/weather?q=${city}&appid=${apiKey}&units=metric`);
+                fetchWeatherData(`${apiBaseUrl}/api/weather?city=${encodeURIComponent(city)}`);
             });
         });
     };
@@ -174,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const fetchForecastData = async (lat, lon) => {
         try {
-            const response = await fetch(`${apiBaseUrl}/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`);
+            const response = await fetch(`${apiBaseUrl}/api/forecast?lat=${lat}&lon=${lon}`);
             if (!response.ok) throw new Error('Failed to fetch forecast');
             const data = await response.json();
             displayForecast(data);
@@ -266,7 +266,7 @@ document.addEventListener('DOMContentLoaded', () => {
         searchButton.addEventListener('click', () => {
             const city = locationInput.value.trim();
         if (city) {
-            fetchWeatherData(`${apiBaseUrl}/weather?q=${city}&appid=${apiKey}&units=metric`);
+            fetchWeatherData(`${apiBaseUrl}/api/weather?city=${encodeURIComponent(city)}`);
         } else {
             showWeatherError("Please enter a city name.");
         }
@@ -284,7 +284,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
             navigator.geolocation.getCurrentPosition(
-            pos => fetchWeatherData(`${apiBaseUrl}/weather?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}&appid=${apiKey}&units=metric`),
+            pos => fetchWeatherData(`${apiBaseUrl}/api/weather?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`),
             () => showWeatherError("Geolocation permission denied. Please allow location access.")
             );
         });
@@ -395,7 +395,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Click to view weather
             favCard.querySelector('[data-city]').addEventListener('click', () => {
-                fetchWeatherData(`${apiBaseUrl}/weather?lat=${fav.lat}&lon=${fav.lon}&appid=${apiKey}&units=metric`);
+                fetchWeatherData(`${apiBaseUrl}/api/weather?lat=${fav.lat}&lon=${fav.lon}`);
                 closeFavoritesSidebar();
             });
             
@@ -497,5 +497,5 @@ document.addEventListener('DOMContentLoaded', () => {
     renderFavoritesList();
 
     // Initial fetch for a default city
-    fetchWeatherData(`${apiBaseUrl}/weather?q=Bengaluru&appid=${apiKey}&units=metric`);
+    fetchWeatherData(`${apiBaseUrl}/api/weather?city=Bengaluru`);
 });
