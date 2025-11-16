@@ -2,6 +2,40 @@
 
 A modern, feature-rich weather application built with Node.js and Express.js. Get real-time weather information, 5-day forecasts, and beautiful UI without any login requirements.
 
+## 🖼️ Website Previews
+
+Below are collapsible previews of each major section of the weather_App 
+Click on a section title to view its screenshot 👇
+
+---
+
+<details>
+<summary>🏠 <b>Home </b></summary>
+<br>
+<img width="1860" height="916" alt="Screenshot 2025-11-16 231425" src="https://github.com/user-attachments/assets/0fb4012f-cfa2-448a-a00d-61e1d88a8a91" />
+
+</details>
+
+---
+
+<details>
+<summary>💼 <b>weather details</b></summary>
+<br>
+<img width="1854" height="907" alt="Screenshot 2025-11-16 231441" src="https://github.com/user-attachments/assets/1c06da12-ed67-4041-9ade-289a3383726a" />
+
+</details>
+
+---
+
+<details>
+<summary>👤 <b>Favorites sidebar</b></summary>
+<br>
+<img width="1870" height="919" alt="Screenshot 2025-11-16 231456" src="https://github.com/user-attachments/assets/5588f51e-f409-43e8-b7ab-52aec898b189" />
+
+</details>
+
+---
+
 ## Features
 
 -   **No Login Required**: Instant access to weather information - no authentication needed!
